@@ -112,7 +112,7 @@ echo "mysql server privileges are updated"
 sudo mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "GRANT ALL ON *.* to '${MYSQL_USER}'@'${MYSQL_SERVER_IP}' IDENTIFIED BY '${MYSQL_PASSWORD}'; flush privileges;" || exit 1
 echo "mysql server privileges are updated"
 
-sudo mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
+sudo mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_PASSWORD}';"
 echo "mysql server privileges are updated"
 sudo systemctl restart mysql.service
 fi
