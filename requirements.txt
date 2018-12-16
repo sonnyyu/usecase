@@ -1,0 +1,25 @@
+alembic
+lazypy
+Markdown
+Flask
+flask_login
+Flask-Admin
+flask_caching
+Flask-RESTful
+Flask-Script
+Flask-MySQLdb
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Bootstrap
+importlib;python_version <= '2.7'
+importlib2;python_version >= '3.0'
+MySQL-python;python_version <= '2.7'
+SQLAlchemy
+sqlalchemy_schemadisplay
+SQLAlchemy-Utils
+simplejson
+stevedore
+setuptools
+requests
+oslo.utils
+oslo.config

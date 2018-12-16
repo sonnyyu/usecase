@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<form action="/api/import/database/showcasedemo" method="post" enctype="multipart/form-data">
+    Select csv to upload:
+    <input type="file" name="fileToUpload" id="fileToUpload">
+    <input type="hidden" name="use_default_primary_fields" value="0" id="use_default_primary_fields">
+    <input type="hidden" name="primary_fields" value="name" id="primary_fields">
+    <input type="submit" value="Upload File" name="submit">
+</form>
+<a href=/api/export/database/showcasedemo>Download Showcase Demo</a>
+</body>
+</html>
+

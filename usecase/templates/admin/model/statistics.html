@@ -1,0 +1,125 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% import 'admin/static.html' as admin_static with context%}
+{% import 'admin/model/layout.html' as model_layout with context %}
+
+{% block head %}
+    {{ super() }}
+    {{ lib.form_css() }}
+{% endblock %}
+
+{% block body %}
+    {% block model_menu_bar %}
+    <ul class="nav nav-tabs actions-nav">
+        <li>
+            <a href="{{ return_url }}">{{ _gettext('List') }}{% if count %} ({{ count }}){% endif %}</a>
+        </li>
+
+        {% if admin_view.can_statistics %}
+        <li class="active dropdown">
+            {{ model_layout.statistics_options() }}
+        </li>
+        {% endif %}
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                Select Chart Type<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="chart-type" chart_type="pie"><a href="#">Pie</a></li>
+                <li class="chart-type", chart_type="doughnut"><a href="#">Doughnut</a></li>
+                <li class="chart-type", chart_type="polarArea"><a herf="#">Polar Area</a></li>
+                <li class="chart-type", chart_type="horizontalBar"><a herf="#">Horizontal Bar</a></li>
+                <li class="chart-type", chart_type="bar"><a href="#">Bar</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    {% endblock %}
+    <canvas id="mychart" width="100%" height="60%"></canvas>
+{% endblock %}
+
+{% block tail %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script language="javascript">
+        $(document).ready(function(){
+            $(".chart-type").click(function(){
+                drawChart($(this).attr("chart_type"));
+            });
+        });
+
+        var ctx = document.getElementById("mychart");
+        var chart = null;
+
+        function chartColors() {
+            var gradient = {
+                0: [0, 255, 0, 1],
+                20: [0, 255, 255, 1],
+                40: [0, 0, 255, 1],
+                60: [255, 0, 0, 1],
+                80: [255, 255, 0, 1],
+                100: [255, 0, 255, 1]
+            };
+            var gradientKeys = Object.keys(gradient);
+            gradientKeys.sort(function(a, b) {
+                return +a - +b;
+            });
+            var datasets = chart.config.data.datasets[0];
+            var setsCount = datasets.data.length;
+            var chartColors = [];
+            for (i = 0; i < setsCount; i++) {
+                var gradientIndex = (i + 1) * (100 / (setsCount + 1));
+                for (j = 0; j < gradientKeys.length; j++) {
+                    var gradientKey = gradientKeys[j];
+                    if (gradientIndex === +gradientKey) {
+                        chartColors[i] = 'rgba(' + gradient[gradientKey].toString() + ')';
+                        break;
+                    } else if (gradientIndex < +gradientKey) {
+                        var prevKey = gradientKeys[j - 1];
+                        var gradientPartIndex = (gradientIndex - prevKey) / (gradientKey - prevKey);
+                        var color = [];
+                        for (k = 0; k < 4; k++) {
+                            color[k] = gradient[prevKey][k] - (
+                                (gradient[prevKey][k] - gradient[gradientKey][k]) * gradientPartIndex
+                            );
+                            if (k < 3) color[k] = Math.round(color[k]);
+                        }
+                        chartColors[i] = 'rgba(' + color.toString() + ')';
+                        break;
+                    }
+                }
+            }
+            for (i = 0; i < setsCount; i++) {
+                if (!datasets.backgroundColor) datasets.backgroundColor = [];
+                datasets.backgroundColor[i] = chartColors[i];
+                if (!datasets.borderColor) datasets.borderColor = [];
+                datasets.borderColor[i] = "rgba(255,255,255,1)";
+            }
+            chart.update();
+        }
+
+
+        function drawChart(chart_type) {
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: chart_type,
+                data: {
+                    labels:  {{ aggregation_labels|tojson|safe }},
+                    datasets: [{
+                        label: "{{ aggregation_key }}",
+                        data: {{ aggregation_values|tojson|safe }}
+                    }]
+                },
+                options: {
+                    legend: { display: true },
+                    title: {
+                        display: true,
+                        text: "{{ aggregation_key }}"
+                    }
+                }
+            });
+            chartColors();
+        }
+        drawChart("pie");
+    </script>
+{% endblock %}
