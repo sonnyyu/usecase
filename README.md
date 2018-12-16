@@ -1,10 +1,15 @@
 # usecase
 
 Clone:
+
 ssh-keygen -t rsa -C "sonnyyuirm@gmail.com"
+
 cd ~/.ssh
+
 cat id_rsa.pub
+
 copy it into Account Settings > SSH 
+
 ssh -vT git@github.com
 
 cd ~/
