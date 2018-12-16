@@ -22,7 +22,7 @@ cd ~/usecase/install
 
 ./install.sh
 
-Usecase server
+Usecase server:
 
 http://ip:8080/  
 admin@huawei.com/admin
